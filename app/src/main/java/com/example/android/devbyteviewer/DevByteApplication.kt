@@ -34,20 +34,10 @@ class DevByteApplication : Application() {
 
     val applicationScope = CoroutineScope(Dispatchers.Default)
 
-    /**
-     * onCreate is called before the first screen is shown to the user.
-     *
-     * Use it to setup any background tasks, running expensive setup operations in a background
-     * thread to avoid delaying app start.
-     */
-    override fun onCreate() {
-        super.onCreate()
-        Timber.plant(Timber.DebugTree())
-        delayedInit()
-    }
-
-    private fun delayedInit() = applicationScope.launch {
-        setupRecurringWork()
+    private fun delayedInit() {
+        applicationScope.launch {
+            setupRecurringWork()
+        }
     }
 
     private fun setupRecurringWork() {
@@ -61,13 +51,26 @@ class DevByteApplication : Application() {
                     }
                 }.build()
 
-        val repeatingRequest = PeriodicWorkRequestBuilder<RefreshDataWorker>(1, TimeUnit.DAYS)
+        val repeatingRequest
+                = PeriodicWorkRequestBuilder<RefreshDataWorker>(1, TimeUnit.DAYS)
                 .setConstraints(constraints)
                 .build()
+
         WorkManager.getInstance().enqueueUniquePeriodicWork(
                 RefreshDataWorker.WORK_NAME,
                 ExistingPeriodicWorkPolicy.KEEP,
                 repeatingRequest)
     }
 
+    /**
+     * onCreate is called before the first screen is shown to the user.
+     *
+     * Use it to setup any background tasks, running expensive setup operations in a background
+     * thread to avoid delaying app start.
+     */
+    override fun onCreate() {
+        super.onCreate()
+        Timber.plant(Timber.DebugTree())
+        delayedInit()
+    }
 }

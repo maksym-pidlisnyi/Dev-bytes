@@ -21,8 +21,6 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
-private lateinit var INSTANCE: VideosDatabase
-
 @Dao
 interface VideoDao {
     @Query("select * from databasevideo")
@@ -36,6 +34,8 @@ interface VideoDao {
 abstract class VideosDatabase : RoomDatabase() {
     abstract val videoDao: VideoDao
 }
+
+private lateinit var INSTANCE: VideosDatabase
 
 fun getDatabase(context: Context): VideosDatabase {
     synchronized(VideosDatabase::class.java) {

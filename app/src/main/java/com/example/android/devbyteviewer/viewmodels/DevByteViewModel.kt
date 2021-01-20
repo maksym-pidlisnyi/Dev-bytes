@@ -21,6 +21,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.example.android.devbyteviewer.database.getDatabase
 import com.example.android.devbyteviewer.repository.VideosRepository
 import kotlinx.coroutines.CoroutineScope
@@ -40,11 +41,20 @@ import kotlinx.coroutines.launch
  */
 class DevByteViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val vieModelJob = SupervisorJob()
-    private val viewModelScope = CoroutineScope(vieModelJob + Dispatchers.Main)
+    /**
+     *
+     */
+
+    /**
+     *
+     */
+
     private val database = getDatabase(application)
     private val videosRepository = VideosRepository(database)
 
+    /**
+     * init{} is called immediately when this ViewModel is created.
+     */
     init {
         viewModelScope.launch {
             videosRepository.refreshVideos()
@@ -53,10 +63,8 @@ class DevByteViewModel(application: Application) : AndroidViewModel(application)
 
     val playlist = videosRepository.videos
 
-    override fun onCleared() {
-        super.onCleared()
-        vieModelJob.cancel()
-    }
+    /**
+     */
 
     /**
      * Factory for constructing DevByteViewModel with parameter
